@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontal, NotebookPen } from "lucide-react";
+import { Loader2, MoreHorizontal, NotebookPen, Trash } from "lucide-react";
 import { Button } from "./ui/button";
 import NoteDropdown from "./NoteDropdown";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Note } from "@prisma/client";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const NoteElements = () => {
   const [notes, setNotes] = useState<Note[] | []>([]);
@@ -30,6 +31,28 @@ const NoteElements = () => {
     getAllNotes();
   }, []);
 
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const handleDelete = async (noteId: string) => {
+    try {
+      setLoading(true);
+      await axios.delete(`/api/notes/${noteId}`);
+      toast.success("Note deleted successfully");
+      setNotes(notes.filter((note) => note.id !== noteId));
+      router.refresh();
+      router.push("/");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data || "An error occurred";
+        toast.error(errorMessage);
+      } else {
+        toast.error("An error occured");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (notes.length === 0) return null;
   return (
     <>
@@ -45,8 +68,16 @@ const NoteElements = () => {
               {note.title}
             </div>
           </Link>
-          <NoteDropdown noteId={note.id}>
-            <MoreHorizontal className="w-4 h-4" />
+          <NoteDropdown
+            onDelete={() => {
+              handleDelete(note.id);
+            }}
+          >
+            {loading ? (
+              <Loader2 className="w-4 h-4 animate-spin transition" />
+            ) : (
+              <MoreHorizontal className="w-4 h-4" />
+            )}
           </NoteDropdown>
         </Button>
       ))}

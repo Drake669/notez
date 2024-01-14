@@ -1,7 +1,6 @@
 "use client";
 import { TrashIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,23 +8,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import React from "react";
-import DeleteNoteDialog from "./DeleteNoteDialog";
 
 export default function NoteDropdown({
   children,
-  noteId,
+  onDelete,
 }: {
   children: React.ReactNode;
-  noteId: string;
+  onDelete: () => void;
 }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-          <DeleteNoteDialog noteId={noteId}>
-            <TrashIcon className="mr-2 h-4 w-4" />
-            <span>Delete note</span>
-          </DeleteNoteDialog>
+        <DropdownMenuItem
+          className="text-rose-500 hover:cursor-pointer"
+          onClick={onDelete}
+        >
+          <TrashIcon className="mr-2 h-4 w-4" />
+          <span>Delete note</span>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
