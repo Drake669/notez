@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import React from "react";
 
-export function Dropdown({ children }: { children: React.ReactNode }) {
+export function AvatarDropdown({ children }: { children: React.ReactNode }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>

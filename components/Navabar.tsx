@@ -1,5 +1,5 @@
 import AvatarComp from "./Avatar";
-import { Dropdown } from "./Dropdown";
+import { AvatarDropdown } from "./AvatarDropdown";
 import MobileSidebar from "./MobileSidebar";
 
 const Navbar = () => {
@@ -7,9 +7,9 @@ const Navbar = () => {
     <div className="border-b shadow-sm mb-10 flex bg-white items-center p-4 h-full">
       <MobileSidebar />
       <div className="flex ml-auto gap-x-2">
-        <Dropdown>
+        <AvatarDropdown>
           <AvatarComp />
-        </Dropdown>
+        </AvatarDropdown>
       </div>
     </div>
   );
