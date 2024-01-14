@@ -53,7 +53,7 @@ export default function NewNoteDialog({
       const response = await axios.post("/api/notes", values);
       toast.success("New note added successfully");
       router.refresh();
-      router.push(`/${response.data.id}`);
+      window.location.href = `/${response.data.id}`;
       form.reset();
     } catch (error) {
       if (axios.isAxiosError(error)) {

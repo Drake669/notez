@@ -8,11 +8,19 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Note } from "@prisma/client";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const NoteElements = () => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [id, setId] = useState("");
   const [notes, setNotes] = useState<Note[] | []>([]);
 
+  const pathname = usePathname();
+  const noteId = pathname.split("/").pop();
+  console.log(noteId);
   useEffect(() => {
     const getAllNotes = async () => {
       try {
@@ -29,14 +37,17 @@ const NoteElements = () => {
       }
     };
     getAllNotes();
-  }, []);
+    return () => {
+      setSuccess(false);
+    };
+  }, [success]);
 
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const handleDelete = async (noteId: string) => {
     try {
+      setId(noteId);
       setLoading(true);
       await axios.delete(`/api/notes/${noteId}`);
+      setSuccess(true);
       toast.success("Note deleted successfully");
       setNotes(notes.filter((note) => note.id !== noteId));
       router.refresh();
@@ -60,7 +71,10 @@ const NoteElements = () => {
         <Button
           key={note.id}
           variant={"ghost"}
-          className="flex items-center justify-between w-full text-slate-500 "
+          className={cn(
+            "flex items-center justify-between w-full my-2 text-slate-500 ",
+            noteId === note.id && "bg-slate-100"
+          )}
         >
           <Link href={`/${note.id}`}>
             <div className="text-md flex items-center">
@@ -73,7 +87,7 @@ const NoteElements = () => {
               handleDelete(note.id);
             }}
           >
-            {loading ? (
+            {loading && id === note.id ? (
               <Loader2 className="w-4 h-4 animate-spin transition" />
             ) : (
               <MoreHorizontal className="w-4 h-4" />
