@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import * as z from "zod";
 import axios from "axios";
 import { useForm } from "react-hook-form";
@@ -17,10 +17,8 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -56,6 +54,7 @@ export default function NewNoteDialog({
       toast.success("New note added successfully");
       router.refresh();
       router.push(`/${response.data.id}`);
+      form.reset();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorMessage = error.response?.data || "An error occurred";
