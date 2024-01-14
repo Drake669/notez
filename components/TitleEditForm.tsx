@@ -44,7 +44,7 @@ const TitleEditForm = ({
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await axios.post("/api/notes", values);
+      const response = await axios.patch(`/api/notes/${note?.id}`, values);
       toast.success("Note updated successfully");
       router.refresh();
       form.reset();
