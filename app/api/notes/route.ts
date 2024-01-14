@@ -28,7 +28,6 @@ export async function POST(req:Request) {
 export async function GET(req:Request) {
     try {
         const notes = await db.note.findMany()
-        console.log(notes)
         return NextResponse.json(notes)
     } catch (error) {
         console.log("GET NOTES ERROR", error)

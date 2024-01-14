@@ -33,20 +33,23 @@ const NoteElements = () => {
   if (notes.length === 0) return null;
   return (
     <>
-      <Button
-        variant={"ghost"}
-        className="flex items-center justify-between w-full text-slate-500 "
-      >
-        <Link href={"/"}>
-          <div className="text-md flex items-center">
-            <NotebookPen className="h-4 w-4 mr-2" />
-            Untitled
-          </div>
-        </Link>
-        <NoteDropdown>
-          <MoreHorizontal className="w-4 h-4" />
-        </NoteDropdown>
-      </Button>
+      {notes.map((note) => (
+        <Button
+          key={note.id}
+          variant={"ghost"}
+          className="flex items-center justify-between w-full text-slate-500 "
+        >
+          <Link href={`/${note.id}`}>
+            <div className="text-md flex items-center">
+              <NotebookPen className="h-4 w-4 mr-2" />
+              {note.title}
+            </div>
+          </Link>
+          <NoteDropdown noteId={note.id}>
+            <MoreHorizontal className="w-4 h-4" />
+          </NoteDropdown>
+        </Button>
+      ))}
     </>
   );
 };
