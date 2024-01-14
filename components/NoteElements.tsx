@@ -10,6 +10,7 @@ import { Note } from "@prisma/client";
 import toast from "react-hot-toast";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import truncate from "@/lib/truncate";
 
 const NoteElements = () => {
   const router = useRouter();
@@ -20,7 +21,6 @@ const NoteElements = () => {
 
   const pathname = usePathname();
   const noteId = pathname.split("/").pop();
-  console.log(noteId);
   useEffect(() => {
     const getAllNotes = async () => {
       try {
@@ -72,14 +72,14 @@ const NoteElements = () => {
           key={note.id}
           variant={"ghost"}
           className={cn(
-            "flex items-center justify-between w-full my-2 text-slate-500 ",
+            "flex items-center justify-between w-full my-2 text-slate-500 text-sm",
             noteId === note.id && "bg-slate-100"
           )}
         >
           <Link href={`/${note.id}`}>
             <div className="text-md flex items-center">
               <NotebookPen className="h-4 w-4 mr-2" />
-              {note.title}
+              <p>{truncate(note.title)}</p>
             </div>
           </Link>
           <NoteDropdown
