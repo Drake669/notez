@@ -5,19 +5,22 @@ import { Button } from "./ui/button";
 import NoteDropdown from "./NoteDropdown";
 import Link from "next/link";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Note } from "@prisma/client";
 import toast from "react-hot-toast";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import truncate from "@/lib/truncate";
+import { Context } from "./context/NoteContext";
+import { ScrollArea } from "./ui/scroll-area";
 
 const NoteElements = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [id, setId] = useState("");
-  const [notes, setNotes] = useState<Note[] | []>([]);
+
+  const { notes, setNotes } = useContext(Context);
 
   const pathname = usePathname();
   const noteId = pathname.split("/").pop();
@@ -40,7 +43,7 @@ const NoteElements = () => {
     return () => {
       setSuccess(false);
     };
-  }, [success]);
+  }, [setNotes]);
 
   const handleDelete = async (noteId: string) => {
     try {
@@ -66,14 +69,14 @@ const NoteElements = () => {
 
   if (notes.length === 0) return null;
   return (
-    <>
+    <ScrollArea className="h-[75vh] w-full rounded-md">
       {notes.map((note) => (
         <Button
           key={note.id}
           variant={"ghost"}
           className={cn(
             "flex items-center justify-between w-full my-2 text-slate-500 text-sm",
-            noteId === note.id && "bg-slate-100"
+            noteId === note.id && "bg-slate-100 text-black"
           )}
         >
           <Link href={`/${note.id}`}>
@@ -95,7 +98,7 @@ const NoteElements = () => {
           </NoteDropdown>
         </Button>
       ))}
-    </>
+    </ScrollArea>
   );
 };
 

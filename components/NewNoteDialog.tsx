@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import * as z from "zod";
 import axios from "axios";
 import { useForm } from "react-hook-form";
@@ -25,6 +25,8 @@ import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { Context } from "./context/NoteContext";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -45,15 +47,19 @@ export default function NewNoteDialog({
     },
   });
 
+  const { open, setOpen, setNotes, notes } = useContext(Context);
+
   const { isSubmitting } = form.formState;
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const response = await axios.post("/api/notes", values);
+      setNotes([response.data, ...notes]);
       toast.success("New note added successfully");
       router.refresh();
-      window.location.href = `/${response.data.id}`;
+      router.push(`/${response.data.id}`);
+      setOpen(false);
       form.reset();
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -66,14 +72,19 @@ export default function NewNoteDialog({
     }
   }
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog
+      open={open}
+      onOpenChange={() => {
+        setOpen(false);
+      }}
+    >
+      {children}
       <DialogContent className="sm:max-w-[425px]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <DialogHeader>
+            <div className="flex items-center justify-between">
               <DialogTitle>Add a new note</DialogTitle>
-            </DialogHeader>
+            </div>
 
             <FormField
               control={form.control}

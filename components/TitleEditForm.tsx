@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import * as z from "zod";
 import axios from "axios";
 import { useForm } from "react-hook-form";
@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { Note } from "@prisma/client";
+import { Context } from "./context/NoteContext";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -31,6 +32,7 @@ const TitleEditForm = ({
   note: Note | null;
   setTitleEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const { setNotes, notes, setCurrentNote } = useContext(Context);
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,8 +47,17 @@ const TitleEditForm = ({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const response = await axios.patch(`/api/notes/${note?.id}`, values);
+      setCurrentNote(response.data);
       toast.success("Note updated successfully");
       router.refresh();
+      setNotes(
+        notes.map((n) => {
+          if (n.id === note?.id) {
+            n.title = values.title;
+          }
+          return n;
+        })
+      );
       form.reset();
       setTitleEdit(false);
     } catch (error) {

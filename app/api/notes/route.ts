@@ -1,5 +1,4 @@
 import { db } from "@/lib/db"
-import { Prisma } from "@prisma/client"
 import { NextResponse } from "next/server"
 
 export async function POST(req:Request) {
@@ -27,7 +26,11 @@ export async function POST(req:Request) {
 
 export async function GET(req:Request) {
     try {
-        const notes = await db.note.findMany()
+        const notes = await db.note.findMany({
+            orderBy: {
+                createdAt: "desc"
+            }
+        })
         return NextResponse.json(notes)
     } catch (error) {
         console.log("GET NOTES ERROR", error)

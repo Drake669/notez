@@ -5,12 +5,13 @@ import TitleEditForm from "@/components/TitleEditForm";
 import { Note } from "@prisma/client";
 import axios from "axios";
 import { Loader2, Pencil } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import moment from "moment";
+import { Context } from "@/components/context/NoteContext";
 
-const Note = ({ params }: { params: { noteId: string } }) => {
-  const [currentNote, setCurrentNote] = useState<Note | null>(null);
+const NotePage = ({ params }: { params: { noteId: string } }) => {
+  const { currentNote, setCurrentNote } = useContext(Context);
   const [titleEdit, setTitleEdit] = useState(false);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -30,7 +31,7 @@ const Note = ({ params }: { params: { noteId: string } }) => {
       }
     };
     getNote();
-  }, [params.noteId]);
+  }, [params.noteId, setCurrentNote]);
 
   const handleChange = async (body: string) => {
     try {
@@ -90,4 +91,4 @@ const Note = ({ params }: { params: { noteId: string } }) => {
   );
 };
 
-export default Note;
+export default NotePage;
