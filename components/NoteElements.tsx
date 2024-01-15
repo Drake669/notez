@@ -16,7 +16,7 @@ import { ScrollArea } from "./ui/scroll-area";
 
 const NoteElements = () => {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState("");
   const [success, setSuccess] = useState(false);
   const [id, setId] = useState("");
 
@@ -27,6 +27,7 @@ const NoteElements = () => {
   useEffect(() => {
     const getAllNotes = async () => {
       try {
+        setLoading("notes");
         const response = await axios.get("/api/notes");
         setNotes(response.data);
       } catch (error) {
@@ -37,6 +38,8 @@ const NoteElements = () => {
           const errorMessage = (error as Error).message || "An error occurred";
           toast.error(errorMessage);
         }
+      } finally {
+        setLoading("");
       }
     };
     getAllNotes();
@@ -48,7 +51,7 @@ const NoteElements = () => {
   const handleDelete = async (noteId: string) => {
     try {
       setId(noteId);
-      setLoading(true);
+      setLoading("delete");
       await axios.delete(`/api/notes/${noteId}`);
       setSuccess(true);
       toast.success("Note deleted successfully");
@@ -63,11 +66,20 @@ const NoteElements = () => {
         toast.error("An error occured");
       }
     } finally {
-      setLoading(false);
+      setLoading("");
     }
   };
 
-  if (notes.length === 0) return null;
+  if (notes.length === 0)
+    return (
+      <div className=" text-slate-500 text-sm text-center">Empty Notebook</div>
+    );
+  if (loading === "notes")
+    return (
+      <div className=" flex justify-center">
+        <Loader2 className="w-6 h-6 animate-spin transition" />
+      </div>
+    );
   return (
     <ScrollArea className="h-[75vh] w-full rounded-md">
       {notes.map((note) => (
@@ -90,7 +102,7 @@ const NoteElements = () => {
               handleDelete(note.id);
             }}
           >
-            {loading && id === note.id ? (
+            {loading === "delete" && id === note.id ? (
               <Loader2 className="w-4 h-4 animate-spin transition" />
             ) : (
               <MoreHorizontal className="w-4 h-4" />
