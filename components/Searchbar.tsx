@@ -63,7 +63,7 @@ export function SearchBar() {
         <CommandInput placeholder="Type a command or search..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="All notes">
+          <CommandGroup heading={notes.length === 0 ? "No notes" : "All notes"}>
             {notes.map((note) => (
               <Link key={note.id} href={`/${note.id}`}>
                 <CommandItem>
