@@ -90,6 +90,17 @@ const TitleEditForm = ({
               )}
               Save
             </Button>
+            <Button
+              type="button"
+              variant={"ghost"}
+              disabled={isSubmitting}
+              className="ml-2"
+              onClick={() => {
+                setTitleEdit(false);
+              }}
+            >
+              Cancel
+            </Button>
           </div>
         </form>
       </Form>

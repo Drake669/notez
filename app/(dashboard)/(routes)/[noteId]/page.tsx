@@ -7,6 +7,7 @@ import axios from "axios";
 import { Loader2, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import moment from "moment";
 
 const Note = ({ params }: { params: { noteId: string } }) => {
   const [currentNote, setCurrentNote] = useState<Note | null>(null);
@@ -43,6 +44,10 @@ const Note = ({ params }: { params: { noteId: string } }) => {
     }
   };
 
+  const formatDateTime = (date: Date | undefined) => {
+    return moment(date).format("Do MMMM YYYY, [at] h:mma");
+  };
+
   if (loading)
     return (
       <div className="relative flex items-center justify-center h-full">
@@ -53,6 +58,14 @@ const Note = ({ params }: { params: { noteId: string } }) => {
     );
   return (
     <div className="p-6">
+      <div className="flex flex-col justify-end items-end">
+        <div className="text-slate-500 text-sm">
+          Date created: {formatDateTime(currentNote?.createdAt)}
+        </div>
+        <div className="text-slate-500 text-sm">
+          Date modified: {formatDateTime(currentNote?.updatedAt)}
+        </div>
+      </div>
       {titleEdit ? (
         <TitleEditForm note={currentNote} setTitleEdit={setTitleEdit} />
       ) : (
@@ -66,6 +79,7 @@ const Note = ({ params }: { params: { noteId: string } }) => {
           />
         </div>
       )}
+
       <div className="mt-8">
         <Editor
           initialContent={currentNote?.body || ""}
