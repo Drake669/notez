@@ -16,6 +16,7 @@ const NotePage = ({ params }: { params: { noteId: string } }) => {
   const { currentNote, setCurrentNote } = useContext(Context);
   const [titleEdit, setTitleEdit] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [editLoading, setEditLoading] = useState(false);
   useEffect(() => {
     const getNote = async () => {
       try {
@@ -39,13 +40,20 @@ const NotePage = ({ params }: { params: { noteId: string } }) => {
 
   const handleChange = async (body: string) => {
     try {
-      await axios.patch(`/api/notes/${params.noteId}`, { body });
+      setEditLoading(true);
+      const response = await axios.patch(`/api/notes/${params.noteId}`, {
+        body,
+      });
+      router.refresh();
+      setCurrentNote(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data || "An error occured");
       } else {
         toast.error("An error occured");
       }
+    } finally {
+      setEditLoading(false);
     }
   };
 
@@ -69,8 +77,13 @@ const NotePage = ({ params }: { params: { noteId: string } }) => {
         <div className="text-slate-500 text-sm">
           Date created: {formatDateTime(currentNote?.createdAt)}
         </div>
-        <div className="text-slate-500 text-sm">
-          Date modified: {formatDateTime(currentNote?.updatedAt)}
+        <div className="text-slate-500 text-sm flex items-center">
+          Date modified:{" "}
+          {editLoading ? (
+            <Loader2 className="w-4 h-4 animate-spin transition" />
+          ) : (
+            formatDateTime(currentNote?.updatedAt)
+          )}
         </div>
       </div>
       {titleEdit ? (
