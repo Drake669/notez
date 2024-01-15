@@ -1,5 +1,6 @@
 "use client";
 
+import Editor from "@/components/Editor";
 import TitleEditForm from "@/components/TitleEditForm";
 import { Note } from "@prisma/client";
 import axios from "axios";
@@ -29,6 +30,19 @@ const Note = ({ params }: { params: { noteId: string } }) => {
     };
     getNote();
   }, [params.noteId]);
+
+  const handleChange = async (body: string) => {
+    try {
+      await axios.patch(`/api/notes/${params.noteId}`, { body });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data || "An error occured");
+      } else {
+        toast.error("An error occured");
+      }
+    }
+  };
+
   if (loading)
     return (
       <div className="relative flex items-center justify-center h-full">
@@ -52,6 +66,12 @@ const Note = ({ params }: { params: { noteId: string } }) => {
           />
         </div>
       )}
+      <div className="mt-8">
+        <Editor
+          initialContent={currentNote?.body || ""}
+          onChange={handleChange}
+        />
+      </div>
     </div>
   );
 };
