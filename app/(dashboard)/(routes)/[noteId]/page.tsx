@@ -9,8 +9,10 @@ import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import moment from "moment";
 import { Context } from "@/components/context/NoteContext";
+import { useRouter } from "next/navigation";
 
 const NotePage = ({ params }: { params: { noteId: string } }) => {
+  const router = useRouter();
   const { currentNote, setCurrentNote } = useContext(Context);
   const [titleEdit, setTitleEdit] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -26,12 +28,14 @@ const NotePage = ({ params }: { params: { noteId: string } }) => {
         } else {
           toast.error("An error occured");
         }
+        router.push("/");
+        setCurrentNote(null);
       } finally {
         setLoading(false);
       }
     };
     getNote();
-  }, [params.noteId, setCurrentNote]);
+  }, [params.noteId, router, setCurrentNote]);
 
   const handleChange = async (body: string) => {
     try {
@@ -57,6 +61,8 @@ const NotePage = ({ params }: { params: { noteId: string } }) => {
         </div>
       </div>
     );
+
+  if (!currentNote) null;
   return (
     <div className="p-6">
       <div className="flex flex-col justify-end items-end">

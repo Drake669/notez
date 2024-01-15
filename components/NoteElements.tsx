@@ -70,45 +70,44 @@ const NoteElements = () => {
     }
   };
 
-  if (notes.length === 0)
-    return (
-      <div className=" text-slate-500 text-sm text-center">Empty Notebook</div>
-    );
   if (loading === "notes")
     return (
       <div className=" flex justify-center">
         <Loader2 className="w-6 h-6 animate-spin transition" />
       </div>
     );
+  if (notes.length === 0)
+    return (
+      <div className=" text-slate-500 text-sm text-center">Empty Notebook</div>
+    );
   return (
     <ScrollArea className="h-[75vh] w-full rounded-md">
       {notes.map((note) => (
-        <Button
-          key={note.id}
-          variant={"ghost"}
-          className={cn(
-            "flex items-center justify-between w-full my-2 text-slate-500 text-sm",
-            noteId === note.id && "bg-slate-100 text-black"
-          )}
-        >
-          <Link href={`/${note.id}`}>
+        <Link href={`/${note.id}`} key={note.id}>
+          <Button
+            variant={"ghost"}
+            className={cn(
+              "flex items-center justify-between w-full my-2 text-slate-500 text-sm",
+              noteId === note.id && "bg-slate-100 text-black"
+            )}
+          >
             <div className="text-md flex items-center">
               <NotebookPen className="h-4 w-4 mr-2" />
               <p>{truncate(note.title)}</p>
             </div>
-          </Link>
-          <NoteDropdown
-            onDelete={() => {
-              handleDelete(note.id);
-            }}
-          >
-            {loading === "delete" && id === note.id ? (
-              <Loader2 className="w-4 h-4 animate-spin transition" />
-            ) : (
-              <MoreHorizontal className="w-4 h-4" />
-            )}
-          </NoteDropdown>
-        </Button>
+            <NoteDropdown
+              onDelete={() => {
+                handleDelete(note.id);
+              }}
+            >
+              {loading === "delete" && id === note.id ? (
+                <Loader2 className="w-4 h-4 animate-spin transition" />
+              ) : (
+                <MoreHorizontal className="w-4 h-4" />
+              )}
+            </NoteDropdown>
+          </Button>
+        </Link>
       ))}
     </ScrollArea>
   );
